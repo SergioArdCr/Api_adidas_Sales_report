@@ -37,20 +37,20 @@ def get_ventas_estados(region: str, db: Session = Depends(get_db)):
     return [{"State": r.state, "Total": r.Total} for r in resultado]
 
 @router.post("/ventas")
-def crear_venta(venta: VentaCreate, db: Session = Depends(get_db)):
+def crear_venta(venta: VentaCreate, db: Session = Depends(get_db), user=Depends(get_current_user)):
     nueva = Venta(**venta.model_dump())
     db.add(nueva)
     db.commit()
     return {"mensaje": "Venta creada correctamente"}
 
 @router.put("/ventas/{id}")
-def actualizar_venta(id: int, venta: VentaUpdate, db: Session = Depends(get_db)):
+def actualizar_venta(id: int, venta: VentaUpdate, db: Session = Depends(get_db), user=Depends(get_current_user)):
     db.query(Venta).filter(Venta.id == id).update({"total_sales" : venta.total_sales})
     db.commit()
     return {"mensaje": f"Venta {id} actualizada correctamente"}
 
 @router.delete("/ventas/{id}")
-def eliminar_venta(id: int, db: Session = Depends(get_db)):
+def eliminar_venta(id: int, db: Session = Depends(get_db), user=Depends(get_current_user)):
     db.query(Venta).filter(Venta.id == id).delete()
     db.commit()
     return {"mensaje": f"Venta {id} eliminada correctamente"}
